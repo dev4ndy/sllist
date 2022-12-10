@@ -1,16 +1,21 @@
 package sllist
 
-type Node[T any] struct {
+import (
+	"errors"
+	"fmt"
+)
+
+type Node[T comparable] struct {
 	Data T
 	Next *Node[T]
 }
 
-type SinglyLinkedList[T any] struct {
+type SinglyLinkedList[T comparable] struct {
 	Head *Node[T]
 	Length int 
 }
 
-func MakeSinglyLinkedList[T any](value T) *SinglyLinkedList[T] {
+func MakeSinglyLinkedList[T comparable](value T) *SinglyLinkedList[T] {
 	sll := SinglyLinkedList[T]{}
 	sll.Head = &Node[T]{value, nil}
 	sll.Length = 1
@@ -42,4 +47,37 @@ func (s *SinglyLinkedList[T]) InsertAtEnd(value T) {
 		}
 		ptr = ptr.Next
 	}
+}
+
+func (s *SinglyLinkedList[T]) InsertAfterTarget(value T, targetValue T) error {
+	ptr := s.Head
+	for ptr != nil {
+		if ptr.Data == targetValue {
+			newNode := Node[T]{value, ptr.Next}
+			ptr.Next = &newNode
+			s.Length++;
+			return nil
+		}
+		ptr = ptr.Next
+	}
+	return errors.New(fmt.Sprintf("The \"%v\" value was not found", targetValue))
+}
+
+func (s *SinglyLinkedList[T]) Traverse() {
+	ptr := s.Head
+	for ptr != nil {
+		fmt.Printf("%v\n", ptr.Data)
+		ptr = ptr.Next
+	}
+}
+
+func (s *SinglyLinkedList[T]) Map(function func(value T) T) *SinglyLinkedList[T] {
+	sll := new(SinglyLinkedList[T])
+	ptr := s.Head
+	for ptr != nil {
+		newValue := function(ptr.Data)
+		sll.InsertAtEnd(newValue)
+		ptr = ptr.Next
+	}
+	return sll
 }
