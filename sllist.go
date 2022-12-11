@@ -49,6 +49,39 @@ func (s *SinglyLinkedList[T]) InsertAtEnd(value T) {
 	}
 }
 
+func (s *SinglyLinkedList[T]) Delete (value T) {
+	ptr := s.Head
+	if ptr.Data == value {
+		s.Head = ptr.Next
+		s.Length--
+		return
+	}
+	tmp := ptr
+	ptr = ptr.Next
+	for ptr != nil {
+		if ptr.Data == value {
+			tmp.Next = ptr.Next
+			s.Length--
+			return
+		}
+		tmp = ptr
+		ptr = ptr.Next
+	}
+}
+
+func (s *SinglyLinkedList[T]) Search (value T) (int, *Node[T]) {
+	ptr := s.Head
+	index := 0
+	for ptr != nil {
+		if ptr.Data == value {
+			return index, ptr
+		}
+		ptr = ptr.Next
+		index++
+	}
+	return -1, nil
+}
+
 func (s *SinglyLinkedList[T]) InsertAfterTarget(value T, targetValue T) error {
 	ptr := s.Head
 	for ptr != nil {
